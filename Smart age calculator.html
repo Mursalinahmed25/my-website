@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Age Calculator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      width: 100%;
+      margin-bottom: 20px;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Smart Age Calculator</h1>
+    <input type="text" id="dob" maxlength="10" placeholder="Enter DOB (dd-mm-yyyy or ddmmyyyy)" oninput="autoFormatDOB(this)">
+    <button onclick="calculateAge()">Calculate Age</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function autoFormatDOB(input) {
+      let value = input.value.replace(/\D/g, ''); // Remove non-digit
+      if (value.length > 8) value = value.slice(0, 8);
+
+      let formatted = value;
+      if (value.length >= 5) {
+        formatted = value.slice(0,2) + '-' + value.slice(2,4) + '-' + value.slice(4);
+      } else if (value.length >= 3) {
+        formatted = value.slice(0,2) + '-' + value.slice(2);
+      }
+
+      input.value = formatted;
+    }
+
+    function calculateAge() {
+      const dobInput = document.getElementById("dob").value.trim();
+      const result = document.getElementById("result");
+      const regex = /^(\d{2})-(\d{2})-(\d{4})$/;
+
+      if (!regex.test(dobInput)) {
+        result.textContent = "Invalid format. Please use dd-mm-yyyy.";
+        return;
+      }
+
+      const [_, dd, mm, yyyy] = dobInput.match(regex);
+      const birthDate = new Date(`${yyyy}-${mm}-${dd}`);
+      const today = new Date();
+
+      if (birthDate > today) {
+        result.textContent = "Birth date cannot be in the future.";
+        return;
+      }
+
+      let ageYears = today.getFullYear() - birthDate.getFullYear();
+      let ageMonths = today.getMonth() - birthDate.getMonth();
+      let ageDays = today.getDate() - birthDate.getDate();
+
+      if (ageDays < 0) {
+        ageMonths--;
+        ageDays += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+      }
+
+      if (ageMonths < 0) {
+        ageYears--;
+        ageMonths += 12;
+      }
+
+      result.innerHTML = `You are <strong>${ageYears}</strong> years, <strong>${ageMonths}</strong> months, and <strong>${ageDays}</strong> days old.`;
+    }
+  </script>
+
+
+</body></html>
